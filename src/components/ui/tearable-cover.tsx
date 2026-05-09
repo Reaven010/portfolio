@@ -380,7 +380,7 @@ export default function TearableCover() {
     >
       <video
         ref={videoRef}
-        src="src\the_boys.mp4"
+        src="/the_boys.mp4"
         autoPlay
         loop
         muted
