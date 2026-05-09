@@ -331,7 +331,7 @@
   </footer>
 
   <!-- Backend Integration Script -->
-  <script>
+  <script type="module">
     const API_BASE = 'http://localhost:3000/api';
 
     // ─── Contact Form ───
@@ -359,7 +359,7 @@
             'Accept': 'application/json'
           },
           body: JSON.stringify({
-            access_key: '%VITE_WEB3FORMS_ACCESS_KEY%',
+            access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
             name: name,
             email: email,
             message: message,
