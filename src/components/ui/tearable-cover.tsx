@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 export default function TearableCover() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const [isDestroyed, setIsDestroyed] = useState(false);
   const [opacity, setOpacity] = useState(1);
 
@@ -20,13 +20,11 @@ export default function TearableCover() {
   }, [isDestroyed]);
 
   useEffect(() => {
-    if (!canvasRef.current || !videoRef.current) return;
+    if (!canvasRef.current || !imgRef.current) return;
     const canvas = canvasRef.current;
-    const video = videoRef.current;
+    const img = imgRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    video.play().catch(e => console.log("Video auto-play prevented:", e));
 
     let width = window.innerWidth;
     let height = window.innerHeight;
@@ -213,22 +211,22 @@ export default function TearableCover() {
       p = points.length;
       while (p--) points[p].update(0.016); 
 
-      let videoReady = video.readyState >= 2;
+      let imgReady = img.complete && img.naturalWidth !== 0;
 
       let drawWidth = width;
       let drawHeight = height;
       let drawX = 0;
       let drawY = 0;
 
-      if (videoReady) {
-        const videoAspect = video.videoWidth / video.videoHeight;
+      if (imgReady) {
+        const imgAspect = img.naturalWidth / img.naturalHeight;
         const canvasAspect = width / height;
 
-        if (videoAspect > canvasAspect) {
-          drawWidth = height * videoAspect;
+        if (imgAspect > canvasAspect) {
+          drawWidth = height * imgAspect;
           drawX = -(drawWidth - width) / 2;
         } else {
-          drawHeight = width / videoAspect;
+          drawHeight = width / imgAspect;
           drawY = -(drawHeight - height) / 2;
         }
       }
@@ -264,13 +262,13 @@ export default function TearableCover() {
             ctx.lineTo(pBottomLeft.x, pBottomLeft.y);
             ctx.closePath();
             
-            if (videoReady) {
+            if (imgReady) {
               ctx.clip();
               let orig_x = start_x + x * spacing;
               let orig_y = start_y + y * spacing;
               let dx = pTopLeft.x - orig_x;
               let dy = pTopLeft.y - orig_y;
-              ctx.drawImage(video, drawX + dx, drawY + dy, drawWidth, drawHeight);
+              ctx.drawImage(img, drawX + dx, drawY + dy, drawWidth, drawHeight);
             } else {
               ctx.fill();
             }
@@ -303,9 +301,8 @@ export default function TearableCover() {
           ctx.fillText("CLICK & DRAG TO TEAR", width / 2, height / 2 + 60);
       }
 
-      // Drop the cover if they tear ANYWHERE (e.g. 5% of total constraints are broken)
       if (initialConstraints > 0 && currentConstraints < initialConstraints * 0.95) {
-        setOpacity(prev => prev - 0.03); // Fast fade out
+        setOpacity(prev => prev - 0.03); 
       }
 
       animationFrameId = requestAnimationFrame(update);
@@ -378,13 +375,9 @@ export default function TearableCover() {
       className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-300 ${opacity < 1 ? 'pointer-events-none' : 'pointer-events-auto'}`}
       style={{ opacity }}
     >
-      <video
-        ref={videoRef}
-        src="/the_boys.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
+      <img
+        ref={imgRef}
+        src="/cover.png"
         className="hidden"
       />
       <canvas 
