@@ -12,7 +12,7 @@ const projects = [
   {
     title: "FrontForge",
     url: "https://github.com/Reaven010/frontforge",
-    image: "./frontforge.png",
+    image: "frontforge.png",
     categories: ["AI/GenAI", "Fullstack"],
     description: "An AI-powered web platform that instantly generates responsive HTML, CSS, and JS interfaces from simple prompts using the Gemini API.",
     stack: ["NODE.JS", "EXPRESS", "GEMINI API"],
